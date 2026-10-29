@@ -203,16 +203,15 @@ class TestEjecucionCompleta(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.carpeta_temporal = tempfile.TemporaryDirectory()
+        cls.carpeta_temporal = tempfile.TemporaryDirectory(
+            prefix="tmp_experimento_", dir=CARPETA_TESTS
+        )
+        cls.addClassCleanup(cls.carpeta_temporal.cleanup)
         cls.carpeta = Path(cls.carpeta_temporal.name) / "resultados"
         cls.experimento = ExperimentoEficiencia(
             repeticiones=cls.REPETICIONES, carpeta_salida=cls.carpeta
         )
         cls.rutas = cls.experimento.ejecutar()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.carpeta_temporal.cleanup()
 
     def test_crea_la_carpeta_y_los_archivos(self):
         self.assertTrue(self.carpeta.is_dir())
@@ -257,7 +256,9 @@ class TestEjecucionCompleta(unittest.TestCase):
         self.assertIn("RAM: no disponible", texto)
 
     def test_ejecutar_dos_veces_sobrescribe_sin_error(self):
-        with tempfile.TemporaryDirectory() as temporal:
+        with tempfile.TemporaryDirectory(
+            prefix="tmp_experimento_", dir=CARPETA_TESTS
+        ) as temporal:
             carpeta = Path(temporal) / "resultados"
             for _ in range(2):
                 ExperimentoEficiencia(
@@ -271,14 +272,17 @@ class TestEjecucionCompleta(unittest.TestCase):
         from openpyxl import load_workbook
 
         libro = load_workbook(self.carpeta / "resultados.xlsx")
-        self.assertEqual(
-            libro.sheetnames,
-            ["arboles", "heap", "mediciones_crudas", "ordenes_usados"],
-        )
-        hoja = libro["arboles"]
-        self.assertEqual(hoja.max_row, 7)
-        self.assertIsInstance(hoja["D2"].value, int)
-        self.assertIsInstance(hoja["F2"].value, float)
+        try:
+            self.assertEqual(
+                libro.sheetnames,
+                ["arboles", "heap", "mediciones_crudas", "ordenes_usados"],
+            )
+            hoja = libro["arboles"]
+            self.assertEqual(hoja.max_row, 7)
+            self.assertIsInstance(hoja["D2"].value, int)
+            self.assertIsInstance(hoja["F2"].value, float)
+        finally:
+            libro.close()
 
     @unittest.skipUnless(find_spec("matplotlib"), "matplotlib no esta instalado")
     def test_graficos_generados(self):
