@@ -69,6 +69,8 @@ class Alerta:
             raise TypeError("El estado debe ser una cadena")
         if valor not in ("PENDIENTE", "ATENDIDA", "CANCELADA"):
             raise ValueError("Estado de alerta no valido")
+        if self.__estado != "PENDIENTE":
+            raise ValueError("No se puede cambiar una alerta atendida o cancelada")
         self.__estado = valor
 
     def __str__(self) -> str:

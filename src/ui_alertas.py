@@ -121,7 +121,7 @@ class MenuAlertas:
         sistema = self.leer_texto("Nuevo sistema: ")
         descripcion = self.leer_texto("Nueva descripcion: ")
 
-        self.sistema.actualizar_datos(id, sistema, descripcion)
+        self.sistema.actualizar_datos(alerta, sistema, descripcion)
         print("\nDatos actualizados correctamente.")
 
     # 8. ESTADISTICAS
@@ -137,14 +137,7 @@ class MenuAlertas:
 
     # 9. DEMOSTRACIONES
     def mostrar_demostraciones(self) -> None:
-        try:
-            from demostraciones import ejecutar_demostraciones
-        except ImportError as error:
-            if error.name == "demostraciones":
-                print("\nLas demostraciones aun no estan implementadas.")
-                return
-            raise
-
+        from demostraciones import ejecutar_demostraciones
         ejecutar_demostraciones()
 
 

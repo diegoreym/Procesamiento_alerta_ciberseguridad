@@ -28,7 +28,7 @@ class ArbolAVL:
         return self.__altura_nodo(self.__raiz)
 
     def __actualizar_altura(self, nodo: NodoAVL) -> None:
-        nodo.altura = 1 + max(self.__altura_nodo(nodo.izquierdo),self.__altura_nodo(nodo.derecho),)
+        nodo.altura = 1 + max(self.__altura_nodo(nodo.izquierdo), self.__altura_nodo(nodo.derecho))
 
     def factor_balance(self, nodo: NodoAVL | None) -> int:
         if nodo is None:

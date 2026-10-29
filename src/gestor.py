@@ -91,13 +91,11 @@ class GestorAlerta:
 
     # 7. ACTUALIZAR DATOS DESCRIPTIVOS
     def actualizar_datos(
-        self, id: int, sistema: str, descripcion: str
+        self, alerta: Alerta, sistema: str, descripcion: str
     ) -> None:
 
-        alerta = self.__arbol.buscar(id)
-
-        if alerta is None:
-            raise ValueError("No existe una alerta con ese ID")
+        if not isinstance(alerta, Alerta):
+            raise TypeError("Debe actualizar un objeto Alerta")
 
         # Validar ambos campos antes de modificar cualquiera.
         if not isinstance(sistema, str):

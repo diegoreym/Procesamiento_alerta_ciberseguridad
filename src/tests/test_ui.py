@@ -160,6 +160,18 @@ class TestMenuAlertas(unittest.TestCase):
         self.assertIn("Datos actualizados correctamente", salida)
 
 
+    def test_demostraciones_desde_menu(self):
+        with patch("demostraciones.ejecutar_demostraciones") as ejecutar:
+            self.simular(["9", "0"])
+        ejecutar.assert_called_once_with()
+
+    def test_actualizacion_busca_una_sola_vez(self):
+        self.gestor.registrar(self.crear_alerta())
+        with patch.object(self.gestor, "buscar", wraps=self.gestor.buscar) as buscar:
+            self.simular(["7", "45", "VPN", "Intentos fallidos", "0"])
+        buscar.assert_called_once_with(45)
+        self.assertEqual(self.gestor.buscar(45).sistema, "VPN")
+
     # 11. ESTADISTICAS
     def test_11_estadisticas(self):
         self.gestor.registrar(self.crear_alerta())
